@@ -1,2 +1,2 @@
 # queries
-My repo fro queries
+My repo for queries
