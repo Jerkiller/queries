@@ -4,10 +4,45 @@ My repo for queries
 
 ## Notes on DBs
 
-* ANSI/Sparc Architecture - separation between physical, logical and external layers. Independence to guarantee portability.
+* DB represents a UoD (universe of discourse) or mini-world. Permanent collection of data indicating known facts.
+  * They are (must be): big, shared, secure, durable, efficient
+  * Instead a file system: NO durability, redundancy/inconsistency, NO isolation/atomicity
+* ANSI/Sparc Architecture - separation between physical, logical and external layers.
+  * Consequence 1: Logical Independence. If I change how the app works, the db shouldn't change.
+  * Consequence 2: Physical independence. If I change physical structure or move servers (portability) the logical schema doesn't change.
+* Requirement analysis: NLS -> FS -> Data Dictionary / Glossary
+  * The output of the requirement analysis is the conceptual schema (WHAT to be done) - Completely DBMS independent
+  * Data model (schema) - set of symbolic structures to represent the UoD
+  * a schema is descriptive (intensional level). An instance is enumerative (extensional level)
+  * a schema should be: complete, correct, minimal, readable
 * Conceptual model - for logical independence (logical layer from conceptual). Abstraction from DBMS.
-  * Expressed through ER Schema
-* Relational model - for data independence (physical layer from logical)
+  * Expressed through conceptual/ER Schema
+* ER schema
+  * entity - classification abstraction
+  * relation - association abstraction (n-ary, recursive..)
+  * attribute - aggregation abstraction (domain-specific, NULL values, also on relations)
+  * integrity constraint
+    * cardinality constr. on relationships (0/1 lower bound 1/N upper bound)
+    * cardinality constr on attributes (0,1 or default 1,1 or 1,N or 0,N)
+    * identification constr (choose identifier, also external)
+    * external constr
+  * data dictionary documents ER schema
+* redundancy checks - derived attributes ...
+* DB load calculations
+  * identify supported operations (IRUD, online/batch)
+  * identify data volume (AVG no. of instances in an entity, in a relation i calculate from cardianlity)
+  * I plot frequency table to describe kind of op and frequency
+  * I plot access/volume table with avg access: access x freq x weight
+    * person - entity - 1 access - type Write - avg access: 1x500x2=1000
+    * live - relationship - 1 access - type Write - avg access: 1x500x2=1000
+    * city - entity - 1 access - type Read - avg access: 1x500x1=500  -- R/U
+    * city - entity - 1 access - type Write - avg access: 1x500x2=1000  -- R/U
+* Partitioning/merging - for performance reasons
+  * vertical - split entity rows in more entities
+  * horiz - split entity columns in more entities (copy paste of identifiers)
+  * merging - merge diff entities destroying de-duplication of schema. I could have AC AD AE AF BC BD BE BF instead of A B C D E F
+* Relational model - for data independence (physical/internal layer from logical)
+  * Relational schema - HOW things are done - dependent to DBMS class but independent to physical layer. Not always minimal
   * Relation is a typed n-uple (like a table). Elements in a relation are not sorted and all different.
   * Relations are connected through a value-based approach, connections through identifiers and not memory pointers (bidirectionality, portability)
   * A relation has degree N and we have N attributes labeled by attributes headers (columns not sorted, not positional)
@@ -40,4 +75,19 @@ My repo for queries
     * cannot be used in where clauses
   * nested queries
     * cannot access alias defined in subquery from parent query
+* programmatic access to SQL
+  * impedance mismatch between SQL and languages: set-oriented vs record-oriented
+  * terminal, GUI, embedded sql, sqlJ, odbc, jdbc, jrt
+  * JDBC (java.sql, javax.sql)
+    * Class.forName(“org.postgresql.Driver”);
+    * c = DriverManager.getConnection("jdbc:postgresql://localhost/dbname", "login", "pwd");
+    * Statement s = c.createStatement();
+    * ResultSet rs = s.executeQuery("");
+    * while(rs.next()) { String s = rs.getString(""); }
+    * rs.close(); s.close(); c.close();
+    * RS uses cursor method to iterate results.
+    * everything can throw SqlException, handle it!
+    * 2 level mapping: SQL - JDBC - JAVA types
+    * conn pooling
+    * release resources, try-with-resources java8
   
