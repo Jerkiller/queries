@@ -55,6 +55,16 @@ My repo for queries
   * Primary-key - key that cannot be null. One for relation.
   * Foreign-key - set of attributes that point to a primary key with a value-based approach or null.
   * Semi-automatic Mapping: ER -> Relational
+    * map every entity E to Re
+    * Re has got all the attr of E plus all the ext identifiers
+    * Underline identifiers for Re
+    * map every rel Q to Rq
+      * if many to many, a new relation
+      * if 1 to many, merge with the Re with lowest cardinality side relation
+      * if 1 to 1, merge with the non-optional participation if possible, or choose a direction
+    * Rq has the attribute of Q
+    * identifiers of Rq are all the Re PKs
+    * link FKs to PKs. FKs are not PKs!
 * Relational Algebra
   * PI - project (vertical decomposition - columns) PI_<attributes>(Relation)
   * SIGMA - select (horizontal decomposition - rows) SIGMA_<expression>(Relation)
